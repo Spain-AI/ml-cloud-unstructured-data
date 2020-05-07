@@ -1,0 +1,18 @@
+steps:
+    - name: gcr.io/cloud-builders/npm
+      args: ['run', 'build']
+      dir: 'ocr-results'
+    - name: gcr.io/cloud-builders/gcloud
+      args: [
+          'functions',
+          'deploy','${_FUNCTION_NAME}',
+          '--runtime=nodejs10',
+          '--trigger-event=google.storage.object.finalize',
+          '--trigger-resource=${_BUCKET_NAME}',
+          '--service-account=webinar-demo-agent@k-webinar-spainai-2020.iam.gserviceaccount.com',
+          '--source=src',
+          '--entry-point=entrypoint',
+          '--memory=2048MB',
+          '--timeout=300'
+      ]
+      dir: 'ocr-results'
